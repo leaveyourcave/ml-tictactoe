@@ -95,12 +95,3 @@ class GameEnvironment:
         else:
             return 0  # shouldn't happen
 
-
-d = GameEnvironment(3)
-print(d.board)
-print(d.step((1, 1)))
-print(d.board)
-print(d.step((1, 2)))
-print(d.board)
-print(d.step((1, 0)))
-print(d.board)
