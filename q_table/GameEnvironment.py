@@ -10,6 +10,20 @@ class GameEnvironment:
     def reset(self):
         self.board[:] = '.'
 
+    def get_state(self):
+        return ''.join(self.board.flatten())
+
+    def get_all_game_actions(self):
+        return range(0, self.size * self.size)
+        # one_dim = [i for i, e in enumerate(self.board)]
+        # ret = []
+        # for y in one_dim:
+        #     sec_dim = [i for i, e in enumerate(self.board[y])]
+        #     for x in sec_dim:
+        #         ret.append((y, x))
+        # return ret
+
+
     def check_game_state(self):
         # check horizontal
         for y in range(0, self.size):
@@ -63,8 +77,8 @@ class GameEnvironment:
         self.board[rand_y, rand_x] = 'o'
 
     def step(self, action):
-        y_coordinate = action[0]
-        x_coordinate = action[1]
+        x_coordinate = action % self.size
+        y_coordinate = action / self.size
 
         if y_coordinate >= self.size or x_coordinate >= self.size:
             # Wrong move - field doesn't exist
@@ -95,3 +109,13 @@ class GameEnvironment:
         else:
             return 0  # shouldn't happen
 
+#
+# d = GameEnvironment(3)
+# print(d.board)
+# print(d.step(2))
+# print(d.board)
+# print(d.step(0))
+# print(d.board)
+# print(d.step(8))
+# print(d.board)
+# print(d.get_all_game_actions())
