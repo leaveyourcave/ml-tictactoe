@@ -36,7 +36,7 @@ class Learn:
     def get_q_value(self, state):
         print("checking for " + state)
         if state not in self.q.index:
-            self.q = rfn.append_fields(self.q, state, np.zeros(self.n_possible_actions))
+            self.q.loc[state] = np.zeros(self.n_possible_actions)
         return self.q.loc[state]
 
 
@@ -49,17 +49,42 @@ class Learn:
         rand = np.random.RandomState(777)
 
         for e in range(self.n_episodes):
+            self.env.reset()
             goal = False
             while not goal:
                 print(self.q)
                 current_state = self.env.get_state()
                 print(current_state)
-                possible_actions = self.get_q_value(current_state)
-                # print(possible_actions)
-                if np.sum(possible_actions) > 0:
-                    pass
+                actions_weights = self.get_q_value(current_state)
+                # print(actions_weights)
+                if np.sum(actions_weights) > 0:
+                    action = np.argmax(actions_weights) # Indices of the maximum values along an axis.
                 else:
-                    print("nope")
+                    action = rand.choice(self.all_possible_actions)
+
+                # next_state = action
+
+                reward = self.update_q(current_state, action)
+
+                if reward != 0:
+                    goal = True
+                print(reward)
+
+    def update_q(self, current_state, action):
+
+        reward = self.env.step(action)  # Get R(state, action)
+        next_state = self.env.get_state()
+        next_state_actions_weights = self.get_q_value(next_state)
+        next_q_max = np.amax(next_state_actions_weights)
+
+        # Calculate new Q
+        new_q = reward + self.gamma * next_q_max
+
+        # Set Q(state, action)
+        self.q.loc[current_state][action] = new_q
+
+        return new_q
+
 
 l = Learn()
 l.solve()
